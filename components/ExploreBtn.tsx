@@ -10,7 +10,6 @@ const ExploreBtn = () => {
                 Explore Events
             </Link>
             <Image src="/icons/arrow-down.svg" alt="arrow-down" width="24" height="24" />
-
         </button>
     )
 }
