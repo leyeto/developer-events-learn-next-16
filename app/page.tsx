@@ -1,10 +1,7 @@
 import ExploreBtn from "@/components/ExploreBtn";
 import EventCard from "@/components/EventCard";
+import events from "@/lib/constants"
 
-const events = [
-    {title: "Event 1", image:"/images/event1.png"},
-    {title: "Event 2", image:"/images/event2.png"},
-]
 
 const Home = () => {
     return (
