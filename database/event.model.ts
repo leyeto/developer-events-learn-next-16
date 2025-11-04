@@ -153,7 +153,7 @@ eventSchema.pre('save', function (next) {
                       }
 
                       if (meridiem === 'pm' && hours !== 12) {
-                        hours = 12;
+                        hours += 12;
                       } else if (meridiem === 'am' && hours === 12) {
                         hours = 0;
                       }
