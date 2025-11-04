@@ -19,15 +19,14 @@ interface MongooseCache {
   promise: Promise<typeof mongoose> | null;
 }
 
-// Extend the global type to include our mongoose cache
-declare global {
-  var mongoose: MongooseCache | undefined;
-}
+const globalForMongoose = globalThis as typeof globalThis & {
+  _mongoose?: MongooseCache;
+};
 
-let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+let cached: MongooseCache = globalForMongoose._mongoose || { conn: null, promise: null };
 
-if (!global.mongoose) {
-  global.mongoose = cached;
+if (!globalForMongoose._mongoose) {
+  globalForMongoose._mongoose = cached;
 }
 
 /**

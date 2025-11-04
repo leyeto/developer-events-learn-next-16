@@ -135,32 +135,37 @@ eventSchema.pre('save', function (next) {
   }
 
   // Normalize time format (HH:MM)
-  if (event.isModified('time')) {
-    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-    const time24Regex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (event.isModified('time')) {
+            const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
-    // Check if time is already in HH:MM format
-    if (!timeRegex.test(event.time)) {
-      // Try to parse and format the time
-      const timeParts = event.time.match(/(\d{1,2}):(\d{2})\s*(am|pm)?/i);
-      if (timeParts) {
-        let hours = parseInt(timeParts[1], 10);
-        const minutes = timeParts[2];
-        const meridiem = timeParts[3]?.toLowerCase();
+                if (!timeRegex.test(event.time)) {
+                  const timeParts = event.time.match(/^(\d{1,2}):(\d{2})\s*(am|pm)$/i);
+                  if (!timeParts) {
+                        return next(new Error('Invalid time format. Use HH:MM or HH:MM AM/PM'));
+                      }
 
-        // Convert 12-hour format to 24-hour format
-        if (meridiem === 'pm' && hours !== 12) {
-          hours += 12;
-        } else if (meridiem === 'am' && hours === 12) {
-          hours = 0;
-        }
+                      let hours = parseInt(timeParts[1], 10);
+                  const minutes = timeParts[2];
+                  const meridiem = timeParts[3].toLowerCase();
 
-        event.time = `${hours.toString().padStart(2, '0')}:${minutes}`;
-      } else {
-        return next(new Error('Invalid time format. Use HH:MM or HH:MM AM/PM'));
-      }
-    }
-  }
+                      if (hours < 1 || hours > 12) {
+                        return next(new Error('Invalid time format. Hours must be between 1 and 12 for AM/PM inputs.'));
+                      }
+
+                      if (meridiem === 'pm' && hours !== 12) {
+                        hours = 12;
+                      } else if (meridiem === 'am' && hours === 12) {
+                        hours = 0;
+                      }
+
+                      const normalised = `${hours.toString().padStart(2, '0')}:${minutes}`;
+                  if (!timeRegex.test(normalised)) {
+                        return next(new Error('Invalid time format after normalisation.'));
+                      }
+
+                      event.time = normalised;
+                }
+          }
 
   next();
 });
