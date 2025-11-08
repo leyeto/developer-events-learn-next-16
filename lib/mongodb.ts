@@ -1,12 +1,11 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 // Define the MongoDB URI from environment variables
 const MONGODB_URI = process.env.MONGODB_URI;
 
-
 if (!MONGODB_URI) {
   throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env'
+    "Please define the MONGODB_URI environment variable inside .env",
   );
 }
 
@@ -24,7 +23,10 @@ const globalForMongoose = globalThis as typeof globalThis & {
   _mongoose?: MongooseCache;
 };
 
-let cached: MongooseCache = globalForMongoose._mongoose || { conn: null, promise: null };
+let cached: MongooseCache = globalForMongoose._mongoose || {
+  conn: null,
+  promise: null,
+};
 
 if (!globalForMongoose._mongoose) {
   globalForMongoose._mongoose = cached;
@@ -47,9 +49,11 @@ async function connectDB(): Promise<typeof mongoose> {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI as string, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose
+      .connect(MONGODB_URI as string, opts)
+      .then((mongoose) => {
+        return mongoose;
+      });
   }
 
   try {
