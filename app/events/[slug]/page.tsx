@@ -20,6 +20,17 @@ const EventDetailItem = ({
   );
 };
 
+const EventDetailAgenda = ({ agendaItems }: { agendaItems: string[] }) => (
+  <div className="agenda">
+    <h2>Agenda</h2>
+    <ul>
+      {agendaItems.map((item, index) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  </div>
+);
+
 const EventDetailsPage = async ({
   params,
 }: {
@@ -83,6 +94,8 @@ const EventDetailsPage = async ({
               label={audience}
             />{" "}
           </section>
+
+          <EventDetailAgenda agendaItems={JSON.parse(agenda[0])} />
         </div>
 
         {/*    Right Side - Booking Form */}
