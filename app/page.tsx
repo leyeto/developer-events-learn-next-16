@@ -10,7 +10,6 @@ const Home = async () => {
     const response = await fetch(`${BASE_URL}/api/events`);
 
     const {events} = await response.json();
-    console.log(events.length)
 
 
     return (
