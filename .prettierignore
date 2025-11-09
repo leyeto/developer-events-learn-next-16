@@ -1,12 +1,8 @@
 # Ignore artifacts:
 build
 coverage
-node_modules
 .next
 .idea
-**/.git
-**/.svn
-**/.hg
 **/node_modules
 **/.git
 **/.svn

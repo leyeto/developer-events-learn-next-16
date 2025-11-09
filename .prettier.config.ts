@@ -9,4 +9,4 @@ const config: Config = {
   singleQuote: false,
 };
 
-module.exports = config;
+export default config;

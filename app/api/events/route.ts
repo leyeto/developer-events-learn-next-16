@@ -9,13 +9,35 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     const formData = await req.formData();
 
-    let event;
+    // Convert FormData to plain object
+    const event = Object.fromEntries(formData);
 
-    try {
-      event = Object.fromEntries(formData);
-    } catch (err) {
+    // Validate required fields
+    const requiredFields = [
+      "title",
+      "description",
+      "overview",
+      "venue",
+      "location",
+      "date",
+      "time",
+      "mode",
+      "audience",
+      "agenda",
+      "organizer",
+      "tags",
+    ];
+
+    const missingFields = requiredFields.filter(
+      (field) => !event[field] || event[field] === "",
+    );
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { message: "Invalid JSON data format" },
+        {
+          message: "Validation Error",
+          error: `Missing required fields: ${missingFields.join(", ")}`,
+        },
         { status: 400 },
       );
     }
@@ -55,10 +77,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
   } catch (err) {
     console.error(err);
-    return NextResponse.json({
-      message: "Event Creation Failed",
-      error: err instanceof Error ? err.message : "Unknown Error",
-    });
+    return NextResponse.json(
+      {
+        message: "Event Creation Failed",
+        error: err instanceof Error ? err.message : "Unknown Error",
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -74,7 +99,10 @@ export async function GET() {
     );
   } catch (err) {
     return NextResponse.json(
-      { message: "Event fetching failed", error: err },
+      {
+        message: "Event fetching failed",
+        error: err instanceof Error ? err.message : "Unknown Error",
+      },
       { status: 500 },
     );
   }
