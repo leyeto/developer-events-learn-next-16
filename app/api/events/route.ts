@@ -51,6 +51,48 @@ export async function POST(req: NextRequest, res: NextResponse) {
       );
     }
 
+    // Safely parse tags and agenda
+    let tags: string[];
+    let agenda: string[];
+
+    try {
+      const tagsValue = formData.get("tags");
+      if (typeof tagsValue !== "string" || !tagsValue.trim()) {
+        throw new Error("Tags must be a valid JSON string");
+      }
+      tags = JSON.parse(tagsValue);
+      if (!Array.isArray(tags)) {
+        throw new Error("Tags must be an array");
+      }
+    } catch (error) {
+      return NextResponse.json(
+        {
+          message: "Validation Error",
+          error: `Invalid tags format: ${error instanceof Error ? error.message : "Expected a JSON array"}`
+        },
+        { status: 400 }
+      );
+    }
+
+    try {
+      const agendaValue = formData.get("agenda");
+      if (typeof agendaValue !== "string" || !agendaValue.trim()) {
+        throw new Error("Agenda must be a valid JSON string");
+      }
+      agenda = JSON.parse(agendaValue);
+      if (!Array.isArray(agenda)) {
+        throw new Error("Agenda must be an array");
+      }
+    } catch (error) {
+      return NextResponse.json(
+        {
+          message: "Validation Error",
+          error: `Invalid agenda format: ${error instanceof Error ? error.message : "Expected a JSON array"}`
+        },
+        { status: 400 }
+      );
+    }
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
@@ -69,7 +111,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     event.image = (uploadResult as { secure_url: string }).secure_url;
 
-    const createdEvent = await Event.create(event);
+    const createdEvent = await Event.create({
+      ...event,
+      tags: tags,
+      agenda: agenda,
+    });
 
     return NextResponse.json(
       { message: "Successfully created event", event: createdEvent },
