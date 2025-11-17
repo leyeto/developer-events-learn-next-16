@@ -1,0 +1,9 @@
+# Ignore artifacts:
+build
+coverage
+.next
+.idea
+**/node_modules
+**/.git
+**/.svn
+**/.hg
