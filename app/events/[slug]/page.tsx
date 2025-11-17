@@ -8,7 +8,7 @@ import EventCard from "@/components/EventCard";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 if (!BASE_URL) {
-  throw new Error("NEXT_PUBLIC_BASE_URL environment variable");
+  throw new Error("NEXT_PUBLIC_BASE_URL environment variable not defined");
 }
 
 const EventDetailItem = ({
@@ -83,7 +83,8 @@ const EventDetailsPage = async ({
     },
   } = await request.json();
 
-  if (!description) return notFound();
+  if (!description || !image || !overview || !date || !time || !location)
+    return notFound();
 
   // Ensure agenda and tags are arrays
   const agendaItems = Array.isArray(agenda) ? agenda : [];
@@ -160,7 +161,10 @@ const EventDetailsPage = async ({
         <div className={"events"}>
           {similarEvents.length > 0 &&
             similarEvents.map((similarEvent: IEvent, index) => (
-              <EventCard key={similarEvent.id} {...similarEvent} />
+              <EventCard
+                key={similarEvent._id.toString() || index}
+                {...similarEvent}
+              />
             ))}
         </div>
       </div>
